@@ -40,16 +40,44 @@
 				
         // PLUTO layer for Brooklyn
         var layerUrl = 'http://pluto.cartodb.com/api/v2/viz/09adeda4-fbb8-11e2-9ea5-15cfc813f31e/viz.json';
-				cartodb.createLayer(map, layerUrl).addTo(map);
+				cartodb.createLayer(map, layerUrl).addTo(map)
+				.done(function(layers){
+          layers
+            .getSubLayer(0)
+            .set({
+              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
+            });
+        });
 				// PLUTO layer for Manhattan
         var layerUrl1 = 'http://pluto.cartodb.com/api/v2/viz/e21b7338-fbb7-11e2-a0ed-7128c9850036/viz.json';
-        cartodb.createLayer(map, layerUrl1).addTo(map);
+        cartodb.createLayer(map, layerUrl1).addTo(map)
+				.done(function(layers){
+          layers
+            .getSubLayer(0)
+            .set({
+              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
+            });
+        });
 				// PLUTO layer for the Bronx
 				var layerUrl2 = 'http://pluto.cartodb.com/api/v2/viz/19652da8-fbb7-11e2-a75b-6139856afd6d/viz.json';
-        cartodb.createLayer(map, layerUrl2).addTo(map);
+        cartodb.createLayer(map, layerUrl2).addTo(map)
+				.done(function(layers){
+          layers
+            .getSubLayer(0)
+            .set({
+              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
+            });
+        });
 				// PLUTO for Queens
 				var layerUrl3 = 'http://pluto.cartodb.com/api/v2/viz/4a335440-fbb8-11e2-8ac4-3f21906cb20f/viz.json';
-        cartodb.createLayer(map, layerUrl3).addTo(map);
+        cartodb.createLayer(map, layerUrl3).addTo(map)
+				.done(function(layers){
+          layers
+            .getSubLayer(0)
+            .set({
+              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
+            });
+        });
 				// PLUTO for Staten Island
 				var layerUrl4 = 'http://pluto.cartodb.com/api/v2/viz/5c8e6b3e-fbb8-11e2-a9af-619e94a2c50b/viz.json';
         cartodb.createLayer(map, layerUrl4).addTo(map)
@@ -57,12 +85,22 @@
           layers
             .getSubLayer(0)
             .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[ownertype="P"] { polygon-fill: #A6CEE3;} #layer[ownertype="C"] { polygon-fill: #1F78B4;} #layer[ownertype="X"] { polygon-fill: #B2DF8A;} #layer[ownertype="O"] { polygon-fill: #33A02C; } #layer[ownertype="M"] { polygon-fill: #FB9A99; } #layer[ownertype=null] { polygon-fill: #E31A1C; }'
+              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
             });
         });
       }
+
+
+			// '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[ownertype="P"] { polygon-fill: #A6CEE3;} #layer[ownertype="C"] { polygon-fill: #1F78B4;} #layer[ownertype="X"] { polygon-fill: #B2DF8A;} #layer[ownertype="O"] { polygon-fill: #33A02C; } #layer[ownertype="M"] { polygon-fill: #FB9A99; } #layer[ownertype=null] { polygon-fill: #E31A1C; }'
+
+
+
+			
+			
       // you could use $(window).load(main);
-      window.onload = main;
+      window.onload = main;			
+			
+
     </script>
   </body>
 </html>
