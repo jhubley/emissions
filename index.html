@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PLUTO</title>
+    <title>NYC building green house gas emissions</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <style>
@@ -16,14 +16,26 @@
       <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v2/themes/css/cartodb.ie.css" />
     <![endif]-->
   </head>
-  <body>
+  <body onload="init()">
     <div id="map"></div>
     
     <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
 
     <script>
-      function main() {
-        var map = L.map('map').setView([40.715,-73.95], 11);
+
+// https://github.com/CartoDB/cartodb-pluto
+      function init() {
+        
+				var map = new L.Map('map', { 
+		        center: [40.715,-73.95],
+		        zoom: 11,
+						zoomControl: false,
+						minZoom: 10,
+						maxZoom: 16,
+						attributionControl: true
+		      });
+
+				new L.Control.Zoom({ position: 'topright' }).addTo(map);
         // set a base layer 
 
 				// osm grayscale
@@ -33,73 +45,41 @@
 				// }).addTo(map);
 
 				//open surfer roads
-				L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}', {
+				var base = L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}', {
 					maxZoom: 19,
 					attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 				}).addTo(map);
 				
-        // PLUTO layer for Brooklyn
-        var layerUrl = 'http://pluto.cartodb.com/api/v2/viz/09adeda4-fbb8-11e2-9ea5-15cfc813f31e/viz.json';
-				cartodb.createLayer(map, layerUrl).addTo(map)
-				.done(function(layers){
-          layers
-            .getSubLayer(0)
-            .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
-            });
-        });
-				// PLUTO layer for Manhattan
-        var layerUrl1 = 'http://pluto.cartodb.com/api/v2/viz/e21b7338-fbb7-11e2-a0ed-7128c9850036/viz.json';
-        cartodb.createLayer(map, layerUrl1).addTo(map)
-				.done(function(layers){
-          layers
-            .getSubLayer(0)
-            .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
-            });
-        });
-				// PLUTO layer for the Bronx
-				var layerUrl2 = 'http://pluto.cartodb.com/api/v2/viz/19652da8-fbb7-11e2-a75b-6139856afd6d/viz.json';
-        cartodb.createLayer(map, layerUrl2).addTo(map)
-				.done(function(layers){
-          layers
-            .getSubLayer(0)
-            .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
-            });
-        });
-				// PLUTO for Queens
-				var layerUrl3 = 'http://pluto.cartodb.com/api/v2/viz/4a335440-fbb8-11e2-8ac4-3f21906cb20f/viz.json';
-        cartodb.createLayer(map, layerUrl3).addTo(map)
-				.done(function(layers){
-          layers
-            .getSubLayer(0)
-            .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
-            });
-        });
-				// PLUTO for Staten Island
-				var layerUrl4 = 'http://pluto.cartodb.com/api/v2/viz/5c8e6b3e-fbb8-11e2-a9af-619e94a2c50b/viz.json';
-        cartodb.createLayer(map, layerUrl4).addTo(map)
-				.done(function(layers){
-          layers
-            .getSubLayer(0)
-            .set({
-              cartocss: '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e; }'
-            });
-        });
-      }
+				var layerUrl = 'http://pluto.cartodb.com/api/v2/viz/09adeda4-fbb8-11e2-9ea5-15cfc813f31e/viz.json';
+				
+				var subLayerOptions = [];
+				
+				var allit = new cartodb.createLayer(map, layerUrl)
+						.addTo(map)
+							  		.on('done', function(layer) {
+							
+							var num_sublayers = layer.getSubLayerCount();
+								
+								for (var i = 0; i < num_sublayers; i++) {
+					  			sublayer = layer.getSubLayer(i).set(subLayerOptions);
+					
+					  			sublayer.setSQL("SELECT bx_mappluto_13v1.shape_leng, bx_mappluto_13v1.shape_area, bx_mappluto_13v1.cartodb_id, bx_mappluto_13v1.the_geom_webmercator, bx_mappluto_13v1.bbl, bx_mappluto_13v1.landuse FROM bx_mappluto_13v1 UNION ALL SELECT mn_mappluto_13v1.shape_leng, mn_mappluto_13v1.shape_area, mn_mappluto_13v1.cartodb_id, mn_mappluto_13v1.the_geom_webmercator, mn_mappluto_13v1.bbl, mn_mappluto_13v1.landuse FROM mn_mappluto_13v1 UNION ALL SELECT bk_mappluto_13v1.shape_leng, bk_mappluto_13v1.shape_area, bk_mappluto_13v1.cartodb_id, bk_mappluto_13v1.the_geom_webmercator, bk_mappluto_13v1.bbl, bk_mappluto_13v1.landuse FROM bk_mappluto_13v1 UNION ALL SELECT qn_mappluto_13v1.shape_leng, qn_mappluto_13v1.shape_area, qn_mappluto_13v1.cartodb_id, qn_mappluto_13v1.the_geom_webmercator, qn_mappluto_13v1.bbl, qn_mappluto_13v1.landuse FROM qn_mappluto_13v1 UNION ALL SELECT si_mappluto_13v1.shape_leng, si_mappluto_13v1.shape_area, si_mappluto_13v1.cartodb_id, si_mappluto_13v1.the_geom_webmercator, si_mappluto_13v1.bbl, si_mappluto_13v1.landuse FROM si_mappluto_13v1");
+									sublayer.setCartoCSS('#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e;} #layer[landuse="09"] { polygon-opacity: 0;} #layer[landuse="1O"] { polygon-opacity: 0; } #layer[landuse="11"] { polygon-opacity: 0; }');
+					
+								} // close for loop
+							}) // close allit
+							.on('error', function() {
+						    //log the error
+						  });
+					
+					}; // close init
+					
+
 
 
 			// '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[ownertype="P"] { polygon-fill: #A6CEE3;} #layer[ownertype="C"] { polygon-fill: #1F78B4;} #layer[ownertype="X"] { polygon-fill: #B2DF8A;} #layer[ownertype="O"] { polygon-fill: #33A02C; } #layer[ownertype="M"] { polygon-fill: #FB9A99; } #layer[ownertype=null] { polygon-fill: #E31A1C; }'
 
 
-
-			
-			
-      // you could use $(window).load(main);
-      window.onload = main;			
-			
 
     </script>
   </body>
