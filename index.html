@@ -9,7 +9,50 @@
         height: 100%;
         padding: 0;
         margin: 0;
+				font-family:Tahoma;
       }
+			h2#map-title{
+			 	position:absolute;
+				top:30px;
+				left:30px;
+				z-index:10;
+				font-weight:normal;
+			}
+			#legend{
+				position:absolute;
+				bottom:30px;
+				left:30px;
+				height:50px;
+				color:#fff;
+				width: 250px;
+				padding-top:20px;
+				background-color: rgba(256,256,256,.5);
+				border-radius:3px;
+				z-index:10;
+			}
+			#legendinner{
+				margin:0 auto;
+				position:relative;
+				width:200px;
+				opacity:1;
+			}
+			.legendleft{
+				width:50px;
+				float:left;
+				margin:0px;
+				color: #000;
+			}
+			.legendright{
+				width:50px;
+				float:right;
+				text-align:right;
+				margin:0px;
+				color: #000;
+			}
+			.leaflet-tile-loaded{
+				opacity:.9 !important;
+			}
+			.cartodb-logo img{ visibility:hidden; }
     </style>
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
     <!--[if lte IE 8]>
@@ -18,6 +61,25 @@
   </head>
   <body onload="init()">
     <div id="map"></div>
+		<h2 id="map-title">Greenhouse Gas Emissions</h2>
+		<div id="legend">
+			<div id="legendinner">
+				<svg width="200" height="15">
+					<rect x="0" y="0" width="20" height="10" fill="#003c30"></rect>
+					<rect x="20" y="0" width="20" height="10" fill="#01665e"></rect>
+					<rect x="40" y="0" width="20" height="10" fill="#35978f"></rect>
+					<rect x="60" y="0" width="20" height="10" fill="#80cdc1"></rect>
+					<rect x="80" y="0" width="20" height="10" fill="#c7eae5"></rect>
+					<rect x="100" y="0" width="20" height="10" fill="#f6e8c3"></rect>
+					<rect x="120" y="0" width="20" height="10" fill="#dfc27d"></rect>
+					<rect x="140" y="0" width="20" height="10" fill="#bf812d"></rect>
+					<rect x="160" y="0" width="20" height="10" fill="#8c510a"></rect>
+					<rect x="180" y="0" width="20" height="10" fill="#543005"></rect>
+				</svg>
+				<p class="legendleft">Best</p>
+				<p class="legendright">Worst</p>
+			</div>
+		</div>
     
     <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
 
@@ -27,8 +89,8 @@
       function init() {
         
 				var map = new L.Map('map', { 
-		        center: [40.715,-73.95],
-		        zoom: 11,
+		        center: [40.785,-73.95],
+		        zoom: 13,
 						zoomControl: false,
 						minZoom: 10,
 						maxZoom: 16,
@@ -50,8 +112,7 @@
 					attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 				}).addTo(map);
 				
-				var layerUrl = 'http://pluto.cartodb.com/api/v2/viz/09adeda4-fbb8-11e2-9ea5-15cfc813f31e/viz.json';
-				
+				var layerUrl = 'https://jhubley.cartodb.com/api/v2/viz/b2880774-b971-11e5-b3bd-0e787de82d45/viz.json';
 				var subLayerOptions = [];
 				
 				var allit = new cartodb.createLayer(map, layerUrl)
@@ -62,10 +123,11 @@
 								
 								for (var i = 0; i < num_sublayers; i++) {
 					  			sublayer = layer.getSubLayer(i).set(subLayerOptions);
-					
-					  			sublayer.setSQL("SELECT bx_mappluto_13v1.shape_leng, bx_mappluto_13v1.shape_area, bx_mappluto_13v1.cartodb_id, bx_mappluto_13v1.the_geom_webmercator, bx_mappluto_13v1.bbl, bx_mappluto_13v1.landuse FROM bx_mappluto_13v1 UNION ALL SELECT mn_mappluto_13v1.shape_leng, mn_mappluto_13v1.shape_area, mn_mappluto_13v1.cartodb_id, mn_mappluto_13v1.the_geom_webmercator, mn_mappluto_13v1.bbl, mn_mappluto_13v1.landuse FROM mn_mappluto_13v1 UNION ALL SELECT bk_mappluto_13v1.shape_leng, bk_mappluto_13v1.shape_area, bk_mappluto_13v1.cartodb_id, bk_mappluto_13v1.the_geom_webmercator, bk_mappluto_13v1.bbl, bk_mappluto_13v1.landuse FROM bk_mappluto_13v1 UNION ALL SELECT qn_mappluto_13v1.shape_leng, qn_mappluto_13v1.shape_area, qn_mappluto_13v1.cartodb_id, qn_mappluto_13v1.the_geom_webmercator, qn_mappluto_13v1.bbl, qn_mappluto_13v1.landuse FROM qn_mappluto_13v1 UNION ALL SELECT si_mappluto_13v1.shape_leng, si_mappluto_13v1.shape_area, si_mappluto_13v1.cartodb_id, si_mappluto_13v1.the_geom_webmercator, si_mappluto_13v1.bbl, si_mappluto_13v1.landuse FROM si_mappluto_13v1");
-									sublayer.setCartoCSS('#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1; polygon-fill: #00b36e;} #layer[landuse="09"] { polygon-opacity: 0;} #layer[landuse="1O"] { polygon-opacity: 0; } #layer[landuse="11"] { polygon-opacity: 0; }');
-					
+									
+									//sublayer.setSQL("SELECT plutomanhattan.cartodb_id, plutomanhattan.the_geom, plutomanhattan.bbl, plutomanhattan.landuse, plutomanhattan.the_geom_webmercator FROM plutomanhattan");
+					  			//sublayer.setSQL("SELECT * plutomanhattan_merge");
+									sublayer.setCartoCSS('#layer { polygon-fill: #fff; polygon-opacity: 0; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[landuse="09"] { polygon-opacity: 0;} #layer[landuse="1O"] { polygon-opacity: 0; } #layer[landuse="11"] { polygon-opacity: 0; } #layer [ ghg_emissions <= 100000000] { polygon-fill: #543005; polygon-opacity: 1; } #layer [ ghg_emissions <= 1000000] { polygon-fill: #8c510a; polygon-opacity: 1; } #layer [ ghg_emissions <= 100000] { polygon-fill: #bf812d; polygon-opacity: 1; } #layer [ ghg_emissions <= 10000] { polygon-fill: #dfc27d; polygon-opacity: 1; } #layer [ ghg_emissions <= 5000] { polygon-fill: #f6e8c3; polygon-opacity: 1; } #layer [ ghg_emissions <= 2500] { polygon-fill: #c7eae5; polygon-opacity: 1; } #layer [ ghg_emissions <= 1500] { polygon-fill: #80cdc1; polygon-opacity: 1; } #layer [ ghg_emissions <= 1000] { polygon-fill: #35978f; polygon-opacity: 1; } #layer [ ghg_emissions <= 500] { polygon-fill: #01665e; polygon-opacity: 1; } #layer [ ghg_emissions <= 100] { polygon-fill: #003c30; polygon-opacity: 1; } ');
+														
 								} // close for loop
 							}) // close allit
 							.on('error', function() {
@@ -73,11 +135,7 @@
 						  });
 					
 					}; // close init
-					
 
-
-
-			// '#layer { polygon-opacity: 0.7; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[ownertype="P"] { polygon-fill: #A6CEE3;} #layer[ownertype="C"] { polygon-fill: #1F78B4;} #layer[ownertype="X"] { polygon-fill: #B2DF8A;} #layer[ownertype="O"] { polygon-fill: #33A02C; } #layer[ownertype="M"] { polygon-fill: #FB9A99; } #layer[ownertype=null] { polygon-fill: #E31A1C; }'
 
 
 
