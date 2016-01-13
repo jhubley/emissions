@@ -4,6 +4,7 @@
     <title>NYC building green house gas emissions</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link href='https://fonts.googleapis.com/css?family=Abel|Pathway+Gothic+One' rel='stylesheet' type='text/css'>
     <link rel="icon" type="image/x-icon"  href="favicon.ico">
     <style>
       html, body, #map {
@@ -21,14 +22,19 @@
 				padding:30px 40px;
 				background-color: rgba(256,256,256,.85);
 				border-radius:3px;
-				border:1px solid #999;
+				border:1px solid #ccc;
 			}
-			h2,h4{
-				font-weight:normal;
-			}
+      h2{
+        font-family: 'Pathway Gothic One', sans-serif;
+			  font-size:30px;
+        line-height:120%;
+        font-weight:bold;
+      }
 			h4{
 				margin-top:10px;
 				line-height:140%;
+        font-weight:normal;
+        font-size:14.5px;
 			}
 			a{
 				text-decoration:none;
@@ -45,7 +51,7 @@
 				background-color: rgba(256,256,256,.85);
 				border-radius:3px;
 				z-index:10;
-				border:1px solid #bbb;
+				border:1px solid #ccc;
 			}
       #legend svg{
         filter: grayscale(6%) contrast(110%);
@@ -105,8 +111,8 @@
   <body onload="init()">
     <div id="map"></div>
 		<div id="map-title">
-			<h2>New York City Greenhouse Gas Emissions</h2>
-			<h4>Data: <a href="http://www.nyc.gov/html/gbee/html/plan/ll84_scores.shtml" target="_blank">2015 LL84 Energy and Water Data Disclosure</a>,<br/>NYC Mayor's Office of Sustainability</h4>
+			<h2>New York City<br/>Greenhouse Gas Emissions</h2>
+			<h4>Data: <a href="http://www.nyc.gov/html/gbee/html/plan/ll84_scores.shtml" target="_blank">2015 LL84 Energy and Water<br/>Data Disclosure</a>, NYC Mayor's Office<br/>of Sustainability</h4>
 		</div>
 		<div id="legend">
 			<div id="legendinner">
