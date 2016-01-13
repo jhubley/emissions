@@ -4,43 +4,69 @@
     <title>NYC building green house gas emissions</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="icon" type="image/x-icon"  href="favicon.ico">
     <style>
       html, body, #map {
         height: 100%;
         padding: 0;
         margin: 0;
+        background: #fff;
 				font-family:Tahoma;
       }
-			h2#map-title{
+			#map-title{
 			 	position:absolute;
 				top:30px;
 				left:30px;
 				z-index:10;
+				padding:30px 40px;
+				background-color: rgba(256,256,256,.85);
+				border-radius:3px;
+				border:1px solid #999;
+			}
+			h2,h4{
 				font-weight:normal;
+			}
+			h4{
+				margin-top:10px;
+				line-height:140%;
+			}
+			a{
+				text-decoration:none;
+				color: #358397;
 			}
 			#legend{
 				position:absolute;
 				bottom:30px;
 				left:30px;
-				height:50px;
+				height:80px;
 				color:#fff;
 				width: 250px;
 				padding-top:20px;
-				background-color: rgba(256,256,256,.5);
+				background-color: rgba(256,256,256,.85);
 				border-radius:3px;
 				z-index:10;
+				border:1px solid #bbb;
 			}
+      #legend svg{
+        filter: grayscale(6%) contrast(110%);
+        -webkit-filter: grayscale(6%) contrast(110%);
+      }
 			#legendinner{
 				margin:0 auto;
 				position:relative;
 				width:200px;
 				opacity:1;
 			}
+			.leglabel{
+				padding-bottom:5px;
+				color: #000;
+			}
 			.legendleft{
 				width:50px;
 				float:left;
 				margin:0px;
 				color: #000;
+				font-size:13px;
 			}
 			.legendright{
 				width:50px;
@@ -48,11 +74,28 @@
 				text-align:right;
 				margin:0px;
 				color: #000;
+				font-size:13px;
 			}
 			.leaflet-tile-loaded{
 				opacity:.9 !important;
 			}
+			hr{
+				border: 0;
+				height: 1px;
+				margin-bottom:3px;
+				background: #999;
+			}
 			.cartodb-logo img{ visibility:hidden; }
+      .leaflet-tile {
+        filter: grayscale(6%) contrast(110%);
+        -webkit-filter: grayscale(6%) contrast(113%);
+      }
+      p#data{
+        font-size:13px;
+      }
+      p#datanote{
+        font-size:11px;
+      }
     </style>
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
     <!--[if lte IE 8]>
@@ -61,9 +104,13 @@
   </head>
   <body onload="init()">
     <div id="map"></div>
-		<h2 id="map-title">Greenhouse Gas Emissions</h2>
+		<div id="map-title">
+			<h2>New York City Greenhouse Gas Emissions</h2>
+			<h4>Data: <a href="http://www.nyc.gov/html/gbee/html/plan/ll84_scores.shtml" target="_blank">2015 LL84 Energy and Water Data Disclosure</a>,<br/>NYC Mayor's Office of Sustainability</h4>
+		</div>
 		<div id="legend">
 			<div id="legendinner">
+				<p class="leglabel">Total Emissions:</p>
 				<svg width="200" height="15">
 					<rect x="0" y="0" width="20" height="10" fill="#003c30"></rect>
 					<rect x="20" y="0" width="20" height="10" fill="#01665e"></rect>
@@ -76,20 +123,20 @@
 					<rect x="160" y="0" width="20" height="10" fill="#8c510a"></rect>
 					<rect x="180" y="0" width="20" height="10" fill="#543005"></rect>
 				</svg>
-				<p class="legendleft">Best</p>
-				<p class="legendright">Worst</p>
+				<p class="legendleft">Lowest</p>
+				<p class="legendright">Highest</p>
 			</div>
 		</div>
-    
+
     <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
 
     <script>
 
 // https://github.com/CartoDB/cartodb-pluto
       function init() {
-        
-				var map = new L.Map('map', { 
-		        center: [40.785,-73.95],
+
+				var map = new L.Map('map', {
+		        center: [40.76, -73.96],
 		        zoom: 13,
 						zoomControl: false,
 						minZoom: 10,
@@ -98,42 +145,46 @@
 		      });
 
 				new L.Control.Zoom({ position: 'topright' }).addTo(map);
-        // set a base layer 
 
-				// osm grayscale
-				// L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
-				// 	maxZoom: 18,
-				// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-				// }).addTo(map);
-
-				//open surfer roads
-				var base = L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}', {
-					maxZoom: 19,
-					attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				//ESRI WorldGrayCanvas
+				var base = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+					attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+					maxZoom: 16
 				}).addTo(map);
-				
-				var layerUrl = 'https://jhubley.cartodb.com/api/v2/viz/b2880774-b971-11e5-b3bd-0e787de82d45/viz.json';
+
+				var layerUrl = 'https://jhubley.cartodb.com/api/v2/viz/318326b4-b9b6-11e5-a7a6-0e3ff518bd15/viz.json';
 				var subLayerOptions = [];
-				
+
 				var allit = new cartodb.createLayer(map, layerUrl)
 						.addTo(map)
 							  		.on('done', function(layer) {
-							
+
 							var num_sublayers = layer.getSubLayerCount();
-								
+
 								for (var i = 0; i < num_sublayers; i++) {
 					  			sublayer = layer.getSubLayer(i).set(subLayerOptions);
-									
-									//sublayer.setSQL("SELECT plutomanhattan.cartodb_id, plutomanhattan.the_geom, plutomanhattan.bbl, plutomanhattan.landuse, plutomanhattan.the_geom_webmercator FROM plutomanhattan");
-					  			//sublayer.setSQL("SELECT * plutomanhattan_merge");
-									sublayer.setCartoCSS('#layer { polygon-fill: #fff; polygon-opacity: 0; line-width: 0; line-color: #FFF; line-opacity: 0.1;} #layer[landuse="09"] { polygon-opacity: 0;} #layer[landuse="1O"] { polygon-opacity: 0; } #layer[landuse="11"] { polygon-opacity: 0; } #layer [ ghg_emissions <= 100000000] { polygon-fill: #543005; polygon-opacity: 1; } #layer [ ghg_emissions <= 1000000] { polygon-fill: #8c510a; polygon-opacity: 1; } #layer [ ghg_emissions <= 100000] { polygon-fill: #bf812d; polygon-opacity: 1; } #layer [ ghg_emissions <= 10000] { polygon-fill: #dfc27d; polygon-opacity: 1; } #layer [ ghg_emissions <= 5000] { polygon-fill: #f6e8c3; polygon-opacity: 1; } #layer [ ghg_emissions <= 2500] { polygon-fill: #c7eae5; polygon-opacity: 1; } #layer [ ghg_emissions <= 1500] { polygon-fill: #80cdc1; polygon-opacity: 1; } #layer [ ghg_emissions <= 1000] { polygon-fill: #35978f; polygon-opacity: 1; } #layer [ ghg_emissions <= 500] { polygon-fill: #01665e; polygon-opacity: 1; } #layer [ ghg_emissions <= 100] { polygon-fill: #003c30; polygon-opacity: 1; } ');
-														
+
+									sublayer.setCartoCSS(' #layer [ total_ghg_emissions <= 100000000] { polygon-fill: #543005; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 1000000] { polygon-fill: #8c510a; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 100000] { polygon-fill: #bf812d; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 10000] { polygon-fill: #dfc27d; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 5000] { polygon-fill: #f6e8c3; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 2500] { polygon-fill: #c7eae5; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 1500] { polygon-fill: #80cdc1; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 1000] { polygon-fill: #35978f; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 500] { polygon-fill: #01665e; polygon-opacity: 1; } #layer [ total_ghg_emissions <= 100] { polygon-fill: #003c30; polygon-opacity: 1; } #layer [ total_ghg_emissions = 0] { polygon-fill: #ffffff; polygon-opacity: .1; } ');
+
+									//tooltip
+									sublayer.setInteraction(true);
+									sublayer.setInteractivity(['total_ghg_emissions','direct_ghg_emissions','indirect_ghg_emissions','ownername','yearbuilt']);
+
+                  var i = new cdb.geo.ui.Tooltip({
+									        layer: layer,
+											    template: '<div class="cartodb-tooltip-content-wrapper"> <div class="cartodb-tooltip-content"><p id="data">Owner: <strong>{{ownername}}</strong><br/>Built {{yearbuilt}}</p><hr/><p id="data">Total emissions: {{total_ghg_emissions}}<br/>Direct emissions: {{direct_ghg_emissions}}<br/>Indirect emissions: {{indirect_ghg_emissions}}</p><p id="datanote">(All emissions are listed in units of MtCO2e, metric tons of carbon dioxide equivalent.)</p></div></div>',
+											    position: 'bottom|right'
+									});
+
+									$('body').append(i.render().el);
+
+
 								} // close for loop
 							}) // close allit
 							.on('error', function() {
 						    //log the error
 						  });
-					
+
 					}; // close init
 
 
